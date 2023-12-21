@@ -1,47 +1,119 @@
 
-<% include ./partials/header.ejs %>
-<div class="profile w-full min-h-screen  bg-zinc-800 text-white pt-1">
-    <form id="uploadform" hidden action="/fileupload" method="post" enctype="multipart/form-data">
-        <input type="file" name="image">
+<!-- <% include ./partials/header.ejs %> -->
+<!DOCTYPE html>
+<html lang="en">
 
-    </form>
-    <div class="profdets flex flex-col items-center mt-20 ">
-        <div class="relative">
-            <span class="w-10 h-10 absolute bottom-0 right-0 rounded-full flex items-center justify-center bg-zinc-200">
-                <i id="uploadicon" class="ri-edit-line text-zinc-800"></i>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <!-- Add Tailwind CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Add Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
 
-            </span>
-
-            <div class="w-32 h-32 bg-zinc-200 rounded-full overflow-hidden ">
-                <img class="w-full h-full object-cover" src="/images/uploads/<%=user.ProfileImage %>">
-            </div>
-        </div>
-        
-            <h1 class="text-3xl font-semibold mt-5">Sanket Makh</h1>
-            <h3 class="text-md">@username</h3>
-            <a href ="/edit" class=" mt-5 px-7 py-3 bg-zinc-700  text-xs rounded-full">edit</a>
-            
-            <a href="/add" class="px-10 py-2 rounded-lg bg-red-700 text-xs font-semibold mt-5">Add new Post</a>
-        </div>
-    <div class="cards flex flex-wrap gap-10 px-10">
-        <div class="card">
-               
-            <div class="w-52 h-40  bg-zinc-200 rounded-lg overflow-hidden">
-                <img class="w-full h-full object-cover" src="/images/uploads/<%= user?.posts[0]?.image %>">
-            </div>
-            <a href="/show/posts" class="inline-block text-xl font-semibold mt-5"> Your uploaded Pins</a>
-            <h5 class="text-sm font-medium"> <%= user.posts.length %></h5>
-
-        </div>
-      
+<body class="bg-gray-300 p-8">
+    <h1 class="font-bold">Company Metrics</h1>
+  <div class=" mt-2 grid  grid-cols-4 gap-4 mb-8">
+    
+    <!-- Cards -->
+    <div class="bg-white border-l-8 border-green-400 p-4 rounded-md shadow-md">
+      <p class="text-3xl font-bold">$406,411</p>
+      <h2 class="mt-4 text-lg font-semibold mb-2">Total Revenue</h2>
     </div>
-</div>
-<script>
-    document.querySelector("#uploadicon").addEventListener("click",function(){
-         document.querySelector("#uploadform input").click();
-    })
-    document.querySelector("#uploadform input").addEventListener("change",function(){
-        document.querySelector("#uploadform").submit();
-    })
-</script>
-<% include ./partials/footer.ejs %>
+
+    <div class="bg-white border-l-8 border-green-400 p-4 rounded-md shadow-md">
+      <p class="text-3xl font-bold">$620</p>
+        <h2 class="mt-4 text-lg font-semibold mb-2">Total Jobs Avg</h2>
+      </div>
+
+      <div class="bg-white border-l-8 border-green-400 p-4 rounded-md shadow-md">
+        <p class="text-3xl font-bold">655</p>
+        <h2 class="mt-4 text-lg font-semibold mb-2">Ticket Created</h2>
+      </div>
+
+      <div class="bg-white border-l-8 border-green-400 p-4 rounded-md shadow-md">
+        <p class="text-3xl font-bold">735</p>
+        <h2 class="mt-4 text-lg font-semibold mb-2">Tickets Scheduled</h2>
+      </div>
+
+      <div class="bg-white border-l-8 border-green-400 p-4 rounded-md shadow-md">
+        <p class="text-3xl text-red-500 font-bold">$110,448.8</p>
+        <h2 class="mt-4 text-lg font-semibold mb-2">Outstanding amount</h2>
+      </div>
+
+      <div class="bg-white border-l-8 border-green-400 p-4 rounded-md shadow-md">
+        <p class="text-3xl font-bold">105</p>
+        <h2 class=" mt-4 text-lg font-semibold mb-2">Membership Sold</h2>
+      </div>
+
+      <div class="bg-white border-l-8 border-green-400 p-4 rounded-md shadow-md">
+        <p class="text-3xl font-bold">436</p>
+        <h2 class="mt-4 text-lg font-semibold mb-2">Jobs Completed</h2>
+      </div>
+      <div class="bg-white border-l-8 border-green-400 p-4 rounded-md shadow-md">
+        <p class="text-3xl font-bold">65</p>
+        <h2 class="mt-4 text-lg font-semibold mb-2">Total Cancelled</h2>
+      </div>
+    
+
+    <!-- Graphs --> 
+    <div class="mt-16 col-span-2 tex bg-white p-4 rounded-md shadow-md">
+      <h2 class="text-lg font-semibold mb-4">Revenue by Job Location</h2>
+      <canvas id="locationChart" width="400" height="200"></canvas>
+      <!-- <h1 class="">Title Below Location Chart</h1>  -->
+    </div>
+
+    <div class="mt-16 col-span-2 bg-white p-4 rounded-md shadow-md">
+      <h2 class="text-lg font-semibold mb-4">Revenue by Job Type</h2>
+      <canvas id="typeChart" width="400" height="200"></canvas>
+    </div>
+  </div>
+
+  <script>
+    // Sample data for charts
+    const locationData = {
+      labels: ["Everett", "Seattle", "Lynwood","Bothell","Mukilteo","Edmonds"],
+      datasets: [{
+        label: "Revenue for November 2019",
+        data: [ 75000,70000, 40000,30000,20000,15000],
+        backgroundColor: [ "#38a169",],
+      }]
+    };
+
+    const typeData = {
+      labels: ["Service Plumbing", "Bid work HVAC", "Service HVAC","Bid work Plumbing","HWT Replacement","Material Scale","Maintainance"],
+      datasets: [{
+        label: "Revenue for November 2019",
+        data: [60000, 40000, 30000,28000,22000,15000,1000],
+        backgroundColor: ["#38a169",],
+      }],
+      
+
+    };
+
+    // Create charts
+    const locationChart = new Chart(document.getElementById('locationChart').getContext('2d'), {
+      type: 'bar',
+      data: locationData,
+      options: {
+    indexAxis: 'y',
+  }
+    });
+
+    const typeChart = new Chart(document.getElementById('typeChart').getContext('2d'), {
+      type: 'bar',
+      data: typeData,
+      options: {
+    indexAxis: 'y',
+  }
+    });
+  </script>
+
+</body>
+
+</html>
+
+   
+<!-- <% include ./partials/footer.ejs %> -->
